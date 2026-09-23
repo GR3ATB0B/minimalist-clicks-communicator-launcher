@@ -1,30 +1,14 @@
-# Project Peel
+# Minimalist Clicks Communicator Launcher
 
-Phones aren't the enemy. They pull double duty as a utility and an entertainment device, and the second half is what erodes time and attention without anyone choosing it. Underneath that, smartphones collapsed *reachability* into one unbounded default: be available instantly, to everyone, always. That's a design choice, and it can be designed differently.
+An open-source Android launcher that turns the [Clicks Communicator](https://www.clicks.tech/) into a dumbphone-like tool. It cuts the device down to four apps (**Phone, Messages, Camera, Claude**) and is meant to use the Communicator's hardware LED ring for ambient notifications. No Play Store, no browser, no app drawer, nothing to scroll.
 
-Project Peel puts a shape back around reachability, the way "be home when the streetlights come on" used to. Going full dumbphone doesn't work (dorm keys live in Apple Wallet, classes run through Canvas) and dumbphones keep the same always-reachable assumption anyway. So Peel builds a narrow, well-defined channel instead: a short allowlist of people who can always get through, a receive path that isn't instant, and a reply path with enough friction that "reachable" doesn't mean "hijackable." The model is pagers and payphones, rebuilt with modern parts.
+If you own a Clicks Communicator and want it to be a tool instead of a distraction, this is for you. MIT licensed, so fork it, strip it down further, or make it yours.
 
-When a default has to choose between convenience and boundedness, Peel picks boundedness.
-
-Full philosophy and scope: [`docs/PROJECT_PEEL_BRIEF.md`](docs/PROJECT_PEEL_BRIEF.md)
-
-## The pieces
-
-1. **Peel launcher** (this app). Reduces an Android phone to four tools. Details below.
-2. **Peel/Banana mesh pager** (designed, not built yet). An Android bridge phone catches real SMS and calls, filters and summarizes them, and relays the ones that matter over the free MeshCore LoRa mesh to a pocket pager (Heltec V3 + M5Stack keyboard). Replies go back the same way as real SMS. No cell towers on the pager side, best-effort by design, with a web dashboard as the full record.
-   Architecture, both message-flow diagrams, the message-code scheme, and open questions: [`docs/PEEL-mesh-pager-design.md`](docs/PEEL-mesh-pager-design.md)
-
-## Peel launcher
-
-A minimalist Android launcher for the [Clicks Communicator](https://www.clicks.tech/) that turns the phone back into a tool, not a distraction.
-
-Peel restricts the device to exactly four apps — **Phone, SMS, Camera, Claude** — and uses the Clicks Communicator's hardware LED ring for ambient notifications. No Play Store, no browser, no app drawer.
-
-### Status
+## Status
 
 Phase 1 complete (May 2026): 2x2 launcher grid, swipe-down Control Center with brightness/volume sliders, silent-mode toggle, and Wi-Fi/Bluetooth/Settings deep-links. Tested on Android emulator (API 35). Phase 2 (LED + notifications) and Phase 3 (Wispr Flow + Clicks key) gated on Clicks SDK access.
 
-### The Four Apps
+## The Four Apps
 
 | App    | Source                  | Purpose                  |
 |--------|-------------------------|--------------------------|
@@ -35,23 +19,23 @@ Phase 1 complete (May 2026): 2x2 launcher grid, swipe-down Control Center with b
 
 Plus **Wispr Flow** as a background voice-input service, triggered by the Clicks hardware key.
 
-### Roadmap
+## Roadmap
 
 - **Phase 1 — Core launcher (current).** 2x2 home grid, control center, default-home behavior, emulator-tested.
 - **Phase 2 — LED + notifications.** Clicks LED ring control, SMS/call monitoring, priority contacts. Requires Clicks SDK.
 - **Phase 3 — Wispr Flow + Clicks key.** Hardware key mapping for push-to-talk transcription. Requires Clicks SDK.
 
-### Build
+## Build
 
 Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/superpowers/plans/2026-05-04-peel-core-launcher.md)
 
-#### Requirements
+### Requirements
 
 - macOS or Linux with JDK 17 (Temurin recommended)
 - Android command-line SDK with API 35 platform, build-tools 35.0.0, emulator, and an `arm64-v8a` system image (or `x86_64` on Intel hosts)
 - An emulator AVD or a physical Android 14+ device
 
-#### Commands
+### Commands
 
 ```bash
 # Build the debug APK
@@ -70,6 +54,10 @@ Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/s
 adb shell am start -n com.peel.launcher/.MainActivity
 adb shell cmd package set-home-activity com.peel.launcher/com.peel.launcher.MainActivity
 ```
+
+## Background
+
+This started in May 2026 as the software side of a larger personal project about bounding phone reachability, which moved on to other hardware. The launcher was split out on its own so Clicks owners can find and use it. Internally the code still uses the working name "Peel" (package `com.peel.launcher`, app label, style names).
 
 ## License
 
