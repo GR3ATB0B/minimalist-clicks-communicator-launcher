@@ -1,8 +1,8 @@
-# Peel
+# Minimalist Clicks Communicator Launcher
 
-A minimalist Android launcher for the [Clicks Communicator](https://www.clicks.tech/) that turns the phone back into a tool, not a distraction.
+An open-source Android launcher that turns the [Clicks Communicator](https://www.clicks.tech/) into a dumbphone-like tool. It cuts the device down to four apps (**Phone, Messages, Camera, Claude**) and is meant to use the Communicator's hardware LED ring for ambient notifications. No Play Store, no browser, no app drawer, nothing to scroll.
 
-Peel restricts the device to exactly four apps — **Phone, SMS, Camera, Claude** — and uses the Clicks Communicator's hardware LED ring for ambient notifications. No Play Store, no browser, no app drawer.
+If you own a Clicks Communicator and want it to be a tool instead of a distraction, this is for you. MIT licensed, so fork it, strip it down further, or make it yours.
 
 ## Status
 
@@ -27,7 +27,7 @@ Plus **Wispr Flow** as a background voice-input service, triggered by the Clicks
 
 ## Build
 
-Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/superpowers/plans/2026-05-04-peel-core-launcher.md)
+Phase 1 plan: [`docs/superpowers/plans/2026-05-04-minimal-core-launcher.md`](docs/superpowers/plans/2026-05-04-minimal-core-launcher.md)
 
 ### Requirements
 
@@ -51,8 +51,8 @@ Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/s
 ./gradlew connectedCheck
 
 # Launch on the emulator and set as default home
-adb shell am start -n com.peel.launcher/.MainActivity
-adb shell cmd package set-home-activity com.peel.launcher/com.peel.launcher.MainActivity
+adb shell am start -n com.minimal.launcher/.MainActivity
+adb shell cmd package set-home-activity com.minimal.launcher/com.minimal.launcher.MainActivity
 ```
 
 ## License

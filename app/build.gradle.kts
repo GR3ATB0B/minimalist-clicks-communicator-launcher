@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.peel.launcher"
+    namespace = "com.minimal.launcher"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.peel.launcher"
+        applicationId = "com.minimal.launcher"
         minSdk = 34
         targetSdk = 35
         versionCode = 1

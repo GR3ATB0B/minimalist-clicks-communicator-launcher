@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.content.Intent
 import android.graphics.Rect

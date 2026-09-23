@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Surface -->
-    <color name="peel_background">#000000</color>
-    <color name="peel_panel">#0E0E0E</color>
-    <color name="peel_chip">#1A1A1A</color>
+    <color name="minimal_background">#000000</color>
+    <color name="minimal_panel">#0E0E0E</color>
+    <color name="minimal_chip">#1A1A1A</color>
 
     <!-- Tile palette -->
     <color name="tile_phone">#1F3D2B</color>
@@ -12,10 +12,10 @@
     <color name="tile_claude">#3D2418</color>
 
     <!-- Foreground -->
-    <color name="peel_text_primary">#FFFFFF</color>
-    <color name="peel_text_muted">#888888</color>
-    <color name="peel_text_faint">#444444</color>
-    <color name="peel_icon">#FFFFFF</color>
+    <color name="minimal_text_primary">#FFFFFF</color>
+    <color name="minimal_text_muted">#888888</color>
+    <color name="minimal_text_faint">#444444</color>
+    <color name="minimal_icon">#FFFFFF</color>
 
     <!-- Material defaults retained for system surfaces -->
     <color name="black">#FF000000</color>

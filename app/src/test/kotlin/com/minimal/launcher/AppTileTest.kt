@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

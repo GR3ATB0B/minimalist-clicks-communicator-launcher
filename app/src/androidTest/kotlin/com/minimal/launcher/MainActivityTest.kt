@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView

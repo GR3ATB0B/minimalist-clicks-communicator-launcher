@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
