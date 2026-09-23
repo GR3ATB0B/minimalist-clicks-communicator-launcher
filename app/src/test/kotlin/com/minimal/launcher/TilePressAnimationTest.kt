@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.MotionEvent
 import androidx.test.core.app.ApplicationProvider
@@ -16,7 +16,7 @@ class TilePressAnimationTest {
         val tiles = AppTile.defaultTiles()
         val adapter = AppTileAdapter(tiles) { /* no-op */ }
         val app: android.app.Application = ApplicationProvider.getApplicationContext()
-        app.setTheme(R.style.Theme_Peel)
+        app.setTheme(R.style.Theme_Minimal)
 
         val holder = adapter.onCreateViewHolder(android.widget.FrameLayout(app), 0)
         adapter.onBindViewHolder(holder, 0)

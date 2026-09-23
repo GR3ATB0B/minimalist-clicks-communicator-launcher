@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Peel"
+rootProject.name = "Minimal"
 include(":app")

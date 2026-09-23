@@ -30,11 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/brightness"
-            android:textAppearance="@style/TextAppearance.Peel.Caption" />
+            android:textAppearance="@style/TextAppearance.Minimal.Caption" />
 
         <SeekBar
             android:id="@+id/brightness_seek"
-            style="@style/Widget.Peel.Slider"
+            style="@style/Widget.Minimal.Slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="255" />
@@ -45,11 +45,11 @@
             android:layout_marginTop="22dp"
             android:layout_marginBottom="10dp"
             android:text="@string/volume"
-            android:textAppearance="@style/TextAppearance.Peel.Caption" />
+            android:textAppearance="@style/TextAppearance.Minimal.Caption" />
 
         <SeekBar
             android:id="@+id/volume_seek"
-            style="@style/Widget.Peel.Slider"
+            style="@style/Widget.Minimal.Slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -62,7 +62,7 @@
 
             <TextView
                 android:id="@+id/wifi_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/chip_gap"
@@ -71,7 +71,7 @@
 
             <TextView
                 android:id="@+id/bluetooth_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/chip_gap"
@@ -80,7 +80,7 @@
 
             <TextView
                 android:id="@+id/settings_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -89,7 +89,7 @@
 
         <FrameLayout
             android:id="@+id/silent_toggle"
-            style="@style/Widget.Peel.Chip"
+            style="@style/Widget.Minimal.Chip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp">
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:text="@string/silent_mode"
-                android:textAppearance="@style/TextAppearance.Peel.Chip" />
+                android:textAppearance="@style/TextAppearance.Minimal.Chip" />
 
             <TextView
                 android:id="@+id/silent_toggle_state"
@@ -107,8 +107,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
                 android:text="@string/silent_mode_off"
-                android:textAppearance="@style/TextAppearance.Peel.Body"
-                android:textColor="@color/peel_text_muted" />
+                android:textAppearance="@style/TextAppearance.Minimal.Body"
+                android:textColor="@color/minimal_text_muted" />
         </FrameLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

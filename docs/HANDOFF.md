@@ -1,7 +1,7 @@
-# Peel Launcher — Session Handoff
+# Minimal Launcher — Session Handoff
 
 **Last updated:** 2026-05-05
-**Repo:** https://github.com/GR3ATB0B/peel-launcher (public, on `main`)
+**Repo:** https://github.com/GR3ATB0B/minimalist-clicks-communicator-launcher (public, on `main`)
 **Last commit:** `90bc48d` — *feat: refined Control Center surface, sliders, chips, and motion*
 
 ## Where things stand
@@ -18,7 +18,7 @@
 - Slide-down enter (220ms decel) + slide-up exit (180ms accel) animations with parallel scrim fade
 - Roboto-based type scale tokenized in `dimens.xml` (display 48 / title 20 / body 13 / chip 12 / caption 11 sp) with intentional tracking
 - 23/23 unit tests green (`./gradlew testDebugUnitTest`); previously-passing Espresso tests (`gridShowsFourTiles`, `gridIsVisible`) still green; new tests pin color hexes (`ColorPaletteTest`) and tile press feedback (`TilePressAnimationTest`)
-- Verified end-to-end on `Peel_Test_API35` emulator; screenshots saved at `~/peel_home.png`, `~/peel_grid_bright.png`, `~/peel_cc.png`
+- Verified end-to-end on `Minimal_Test_API35` emulator; screenshots saved at `~/minimal_home.png`, `~/minimal_grid_bright.png`, `~/minimal_cc.png`
 
 **Phase 2 (LED ring + SMS/call notifications + priority contacts)** and **Phase 3 (Wispr Flow + Clicks key mapping)** remain blocked on Clicks Communicator SDK access.
 
@@ -35,7 +35,7 @@ All set up on this Mac, persistent across sessions:
 - JDK 17 (Temurin) at `/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home`
 - Android command-line SDK at `/opt/homebrew/share/android-commandlinetools`
 - `~/.zshrc` exports `ANDROID_HOME`, `ANDROID_SDK_ROOT`, and prepends `platform-tools` + `emulator` to PATH
-- AVD `Peel_Test_API35` (Pixel 7 profile, API 35, arm64-v8a)
+- AVD `Minimal_Test_API35` (Pixel 7 profile, API 35, arm64-v8a)
 - Gradle 9.5 system + 8.9 wrapper, AGP 8.7.3, Kotlin 2.0.21
 - Robolectric pinned to SDK 34 in `app/src/test/resources/robolectric.properties` (it doesn't yet support API 35)
 
@@ -44,18 +44,18 @@ Background `bash`/`zsh` invocations don't source `.zshrc` — when launching the
 ## To resume after a fresh `claude` restart
 
 ```bash
-cd ~/peel-launcher
+cd ~/minimalist-clicks-communicator-launcher
 
 # If emulator is not running:
 nohup /opt/homebrew/share/android-commandlinetools/emulator/emulator \
-  -avd Peel_Test_API35 -no-snapshot-load -no-boot-anim > /tmp/emulator.log 2>&1 &
+  -avd Minimal_Test_API35 -no-snapshot-load -no-boot-anim > /tmp/emulator.log 2>&1 &
 
 # Wait for boot, then:
 adb wait-for-device
 until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 3; done
 
 ./gradlew installDebug
-adb shell cmd package set-home-activity com.peel.launcher/com.peel.launcher.MainActivity
+adb shell cmd package set-home-activity com.minimal.launcher/com.minimal.launcher.MainActivity
 adb shell input keyevent KEYCODE_HOME
 ```
 
@@ -63,18 +63,18 @@ adb shell input keyevent KEYCODE_HOME
 
 | Path | Role |
 |---|---|
-| `docs/superpowers/specs/2026-05-04-peel-phase-1-5-visual-refinement-design.md` | Locked design system spec |
-| `docs/superpowers/plans/2026-05-04-peel-phase-1-5-visual-refinement.md` | Implementation plan (executed) |
-| `docs/superpowers/plans/2026-05-04-peel-core-launcher.md` | Phase 1 plan (executed) |
+| `docs/superpowers/specs/2026-05-04-minimal-phase-1-5-visual-refinement-design.md` | Locked design system spec |
+| `docs/superpowers/plans/2026-05-04-minimal-phase-1-5-visual-refinement.md` | Implementation plan (executed) |
+| `docs/superpowers/plans/2026-05-04-minimal-core-launcher.md` | Phase 1 plan (executed) |
 | `app/src/main/res/values/colors.xml` | Refined-flat palette tokens |
 | `app/src/main/res/values/dimens.xml` | Type scale + spacing tokens |
-| `app/src/main/res/values/themes.xml` | `Theme.Peel`, `Widget.Peel.Chip`, `Widget.Peel.Slider`, type appearances |
+| `app/src/main/res/values/themes.xml` | `Theme.Minimal`, `Widget.Minimal.Chip`, `Widget.Minimal.Slider`, type appearances |
 | `app/src/main/res/drawable/tile_*_bg.xml` | Per-tile rounded background drawables |
 | `app/src/main/res/drawable/ic_*.xml` | Stroke icons (Phone/Messages/Camera) + Claude AI symbol |
 | `app/src/main/res/drawable/chip_pill.xml`, `slider_track.xml`, `slider_thumb.xml`, `cc_panel_bg.xml`, `cc_drag_handle.xml` | Control Center surface drawables |
-| `app/src/main/kotlin/com/peel/launcher/MainActivity.kt` | Home grid + spacing decoration + swipe-down detector |
-| `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt` | FrameLayout-based tile bind + spring press animation |
-| `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt` | Custom panel + scrim animators, chip press feedback |
+| `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt` | Home grid + spacing decoration + swipe-down detector |
+| `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt` | FrameLayout-based tile bind + spring press animation |
+| `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt` | Custom panel + scrim animators, chip press feedback |
 
 ## Caveman plugin
 

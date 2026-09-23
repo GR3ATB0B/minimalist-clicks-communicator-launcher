@@ -1,18 +1,18 @@
-# Peel Launcher Phase 1.5 — Visual Refinement Implementation Plan
+# Minimal Launcher Phase 1.5 — Visual Refinement Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the saturated Phase 1 palette and Material3-default surfaces of the Peel Launcher with the refined-flat design system specified in `docs/superpowers/specs/2026-05-04-peel-phase-1-5-visual-refinement-design.md` — locked color palette, custom tile backgrounds, custom stroke icons, intentional Roboto type scale, custom Control Center sliders/chips/panel, and spring press feedback.
+**Goal:** Replace the saturated Phase 1 palette and Material3-default surfaces of the Minimal Launcher with the refined-flat design system specified in `docs/superpowers/specs/2026-05-04-minimal-phase-1-5-visual-refinement-design.md` — locked color palette, custom tile backgrounds, custom stroke icons, intentional Roboto type scale, custom Control Center sliders/chips/panel, and spring press feedback.
 
 **Architecture:** Pure resource + view refactor. No new modules, no new dependencies. Token files (`colors.xml`, `dimens.xml`) drive every measurable value. Per-tile shape drawables replace `MaterialCardView`. Custom `<shape>` and `<layer-list>` drawables replace `Widget.Material3.Button.OutlinedButton` and the stock `SeekBar`'s default progress drawable. `MainActivity` and `ControlCenterActivity` keep their existing structure — only view types and animators change.
 
-**Tech Stack:** Kotlin · Android Gradle Plugin 8.7.3 · Material 3 · ConstraintLayout · RecyclerView · Robolectric (SDK 34 pin) · Espresso · JUnit4. AVD `Peel_Test_API35`.
+**Tech Stack:** Kotlin · Android Gradle Plugin 8.7.3 · Material 3 · ConstraintLayout · RecyclerView · Robolectric (SDK 34 pin) · Espresso · JUnit4. AVD `Minimal_Test_API35`.
 
 ---
 
 ## Reference
 
-- **Design spec:** `docs/superpowers/specs/2026-05-04-peel-phase-1-5-visual-refinement-design.md` — single source of truth for every dp/sp/hex value used below.
+- **Design spec:** `docs/superpowers/specs/2026-05-04-minimal-phase-1-5-visual-refinement-design.md` — single source of truth for every dp/sp/hex value used below.
 - **Build command:** `./gradlew assembleDebug` (compile only) or `./gradlew installDebug` (build + push to running emulator).
 - **Test commands:** `./gradlew test` (Robolectric/JUnit, no emulator) and `./gradlew connectedAndroidTest` (Espresso, requires emulator running).
 
@@ -22,7 +22,7 @@
 |---|---|---|
 | `app/src/main/res/values/colors.xml` | Rewrite | Color tokens — surface, panel, chip, four tile colors, foreground tints |
 | `app/src/main/res/values/dimens.xml` | **Create** | All sp/dp tokens used by themes and layouts |
-| `app/src/main/res/values/themes.xml` | Modify | `Theme.Peel`, plus new `Widget.Peel.Chip`, `Widget.Peel.Slider`, and text-appearance styles |
+| `app/src/main/res/values/themes.xml` | Modify | `Theme.Minimal`, plus new `Widget.Minimal.Chip`, `Widget.Minimal.Slider`, and text-appearance styles |
 | `app/src/main/res/values-night/themes.xml` | **Delete** | Phase-1 duplicate of the default theme; removed to avoid drift |
 | `app/src/main/res/values/strings.xml` | Modify | "SMS" → "Messages" |
 | `app/src/main/res/drawable/tile_phone_bg.xml` | **Create** | Rounded-rect shape, fill `tile_phone` |
@@ -34,21 +34,21 @@
 | `app/src/main/res/drawable/ic_sms.xml` | **Delete** | Replaced by `ic_messages.xml` |
 | `app/src/main/res/drawable/ic_camera.xml` | Rewrite | Stroke camera + circular lens |
 | `app/src/main/res/drawable/ic_claude.xml` | Rewrite | Wikimedia Commons Claude AI symbol path, fill white |
-| `app/src/main/res/drawable/chip_pill.xml` | **Create** | Pill shape, fill `peel_chip` |
-| `app/src/main/res/drawable/slider_track.xml` | **Create** | Layer-list track (`peel_chip`) + scaled progress (`peel_text_primary`) |
-| `app/src/main/res/drawable/slider_thumb.xml` | **Create** | Oval thumb, fill `peel_text_primary` |
-| `app/src/main/res/drawable/cc_panel_bg.xml` | **Create** | Bottom-rounded rect, fill `peel_panel` |
+| `app/src/main/res/drawable/chip_pill.xml` | **Create** | Pill shape, fill `minimal_chip` |
+| `app/src/main/res/drawable/slider_track.xml` | **Create** | Layer-list track (`minimal_chip`) + scaled progress (`minimal_text_primary`) |
+| `app/src/main/res/drawable/slider_thumb.xml` | **Create** | Oval thumb, fill `minimal_text_primary` |
+| `app/src/main/res/drawable/cc_panel_bg.xml` | **Create** | Bottom-rounded rect, fill `minimal_panel` |
 | `app/src/main/res/drawable/cc_drag_handle.xml` | **Create** | Small rounded pill, `#333333` |
 | `app/src/main/res/layout/activity_main.xml` | Modify | Max-width 480dp, vertical bias 0.5 |
 | `app/src/main/res/layout/item_app_tile.xml` | Rewrite | `FrameLayout` + per-tile background drawable, no `MaterialCardView` |
 | `app/src/main/res/layout/activity_control_center.xml` | Rewrite | Drag handle, restructured slider rows, pill TextView chips, silent-mode row |
-| `app/src/main/kotlin/com/peel/launcher/AppTile.kt` | Modify | "SMS" → "Messages", swap `tile_sms`/`ic_sms` → `tile_messages`/`ic_messages`, add `backgroundRes: Int` field for per-tile drawable |
-| `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt` | Modify | Drop `MaterialCardView`, use per-tile background drawable, add spring press animation |
-| `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt` | Modify | Replace `MaterialButton` lookups with `TextView`, replace `Theme.Peel.ControlCenter` window animation with explicit panel + scrim animators, add chip press animation |
-| `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt` | Modify | Test expects "Messages" label |
-| `app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt` | Modify | Test no longer relies on `MaterialCardView` lookup |
-| `app/src/test/kotlin/com/peel/launcher/ColorPaletteTest.kt` | **Create** | Robolectric test pinning palette hex values |
-| `app/src/test/kotlin/com/peel/launcher/TilePressAnimationTest.kt` | **Create** | Robolectric test pinning press scale/alpha animation |
+| `app/src/main/kotlin/com/minimal/launcher/AppTile.kt` | Modify | "SMS" → "Messages", swap `tile_sms`/`ic_sms` → `tile_messages`/`ic_messages`, add `backgroundRes: Int` field for per-tile drawable |
+| `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt` | Modify | Drop `MaterialCardView`, use per-tile background drawable, add spring press animation |
+| `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt` | Modify | Replace `MaterialButton` lookups with `TextView`, replace `Theme.Minimal.ControlCenter` window animation with explicit panel + scrim animators, add chip press animation |
+| `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt` | Modify | Test expects "Messages" label |
+| `app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt` | Modify | Test no longer relies on `MaterialCardView` lookup |
+| `app/src/test/kotlin/com/minimal/launcher/ColorPaletteTest.kt` | **Create** | Robolectric test pinning palette hex values |
+| `app/src/test/kotlin/com/minimal/launcher/TilePressAnimationTest.kt` | **Create** | Robolectric test pinning press scale/alpha animation |
 
 ---
 
@@ -56,14 +56,14 @@
 
 **Files:**
 - Modify: `app/src/main/res/values/colors.xml`
-- Create: `app/src/test/kotlin/com/peel/launcher/ColorPaletteTest.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/ColorPaletteTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
-Create `app/src/test/kotlin/com/peel/launcher/ColorPaletteTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/ColorPaletteTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider
@@ -82,24 +82,24 @@ class ColorPaletteTest {
         return ContextCompat.getColor(ctx, id)
     }
 
-    @Test fun `peel_background is pure black`() = assertEquals(0xFF000000.toInt(), resolve("peel_background"))
-    @Test fun `peel_panel is 0E0E0E`() = assertEquals(0xFF0E0E0E.toInt(), resolve("peel_panel"))
-    @Test fun `peel_chip is 1A1A1A`() = assertEquals(0xFF1A1A1A.toInt(), resolve("peel_chip"))
+    @Test fun `minimal_background is pure black`() = assertEquals(0xFF000000.toInt(), resolve("minimal_background"))
+    @Test fun `minimal_panel is 0E0E0E`() = assertEquals(0xFF0E0E0E.toInt(), resolve("minimal_panel"))
+    @Test fun `minimal_chip is 1A1A1A`() = assertEquals(0xFF1A1A1A.toInt(), resolve("minimal_chip"))
     @Test fun `tile_phone is forest 1F3D2B`() = assertEquals(0xFF1F3D2B.toInt(), resolve("tile_phone"))
     @Test fun `tile_messages is indigo navy 243349`() = assertEquals(0xFF243349.toInt(), resolve("tile_messages"))
     @Test fun `tile_camera is warm graphite 2A2723`() = assertEquals(0xFF2A2723.toInt(), resolve("tile_camera"))
     @Test fun `tile_claude is terracotta 3D2418`() = assertEquals(0xFF3D2418.toInt(), resolve("tile_claude"))
-    @Test fun `peel_text_primary is white`() = assertEquals(0xFFFFFFFF.toInt(), resolve("peel_text_primary"))
-    @Test fun `peel_text_muted is 888888`() = assertEquals(0xFF888888.toInt(), resolve("peel_text_muted"))
-    @Test fun `peel_text_faint is 444444`() = assertEquals(0xFF444444.toInt(), resolve("peel_text_faint"))
-    @Test fun `peel_icon is white`() = assertEquals(0xFFFFFFFF.toInt(), resolve("peel_icon"))
+    @Test fun `minimal_text_primary is white`() = assertEquals(0xFFFFFFFF.toInt(), resolve("minimal_text_primary"))
+    @Test fun `minimal_text_muted is 888888`() = assertEquals(0xFF888888.toInt(), resolve("minimal_text_muted"))
+    @Test fun `minimal_text_faint is 444444`() = assertEquals(0xFF444444.toInt(), resolve("minimal_text_faint"))
+    @Test fun `minimal_icon is white`() = assertEquals(0xFFFFFFFF.toInt(), resolve("minimal_icon"))
 }
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.ColorPaletteTest`
-Expected: FAIL — most assertions fail because `peel_panel`, `peel_chip`, `tile_messages`, `peel_text_primary`, `peel_text_muted`, `peel_text_faint` don't exist yet, and existing colors are saturated (`tile_phone = #00FF00`, etc.).
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.ColorPaletteTest`
+Expected: FAIL — most assertions fail because `minimal_panel`, `minimal_chip`, `tile_messages`, `minimal_text_primary`, `minimal_text_muted`, `minimal_text_faint` don't exist yet, and existing colors are saturated (`tile_phone = #00FF00`, etc.).
 
 - [ ] **Step 3: Rewrite `app/src/main/res/values/colors.xml`**
 
@@ -107,9 +107,9 @@ Expected: FAIL — most assertions fail because `peel_panel`, `peel_chip`, `tile
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Surface -->
-    <color name="peel_background">#000000</color>
-    <color name="peel_panel">#0E0E0E</color>
-    <color name="peel_chip">#1A1A1A</color>
+    <color name="minimal_background">#000000</color>
+    <color name="minimal_panel">#0E0E0E</color>
+    <color name="minimal_chip">#1A1A1A</color>
 
     <!-- Tile palette -->
     <color name="tile_phone">#1F3D2B</color>
@@ -118,10 +118,10 @@ Expected: FAIL — most assertions fail because `peel_panel`, `peel_chip`, `tile
     <color name="tile_claude">#3D2418</color>
 
     <!-- Foreground -->
-    <color name="peel_text_primary">#FFFFFF</color>
-    <color name="peel_text_muted">#888888</color>
-    <color name="peel_text_faint">#444444</color>
-    <color name="peel_icon">#FFFFFF</color>
+    <color name="minimal_text_primary">#FFFFFF</color>
+    <color name="minimal_text_muted">#888888</color>
+    <color name="minimal_text_faint">#444444</color>
+    <color name="minimal_icon">#FFFFFF</color>
 
     <!-- Material defaults retained for system surfaces -->
     <color name="black">#FF000000</color>
@@ -133,7 +133,7 @@ Note: `tile_sms` and `tile_icon` from the previous palette are intentionally rem
 
 - [ ] **Step 4: Run color-palette test to verify it passes**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.ColorPaletteTest`
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.ColorPaletteTest`
 Expected: PASS for all 11 assertions.
 
 The full build is broken at this point (the rest of the codebase still references `tile_sms` / `tile_icon`). That is fixed in Task 3.
@@ -141,7 +141,7 @@ The full build is broken at this point (the rest of the codebase still reference
 - [ ] **Step 5: Commit**
 
 ```bash
-git add app/src/main/res/values/colors.xml app/src/test/kotlin/com/peel/launcher/ColorPaletteTest.kt
+git add app/src/main/res/values/colors.xml app/src/test/kotlin/com/minimal/launcher/ColorPaletteTest.kt
 git commit -m "feat: refined-flat color palette tokens"
 ```
 
@@ -204,58 +204,58 @@ The night-qualified `themes.xml` is a Phase-1 duplicate of the default. The laun
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Type appearances -->
-    <style name="TextAppearance.Peel.Display" parent="TextAppearance.Material3.HeadlineLarge">
+    <style name="TextAppearance.Minimal.Display" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="android:textSize">@dimen/text_display</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:letterSpacing">-0.04</item>
-        <item name="android:textColor">@color/peel_text_primary</item>
+        <item name="android:textColor">@color/minimal_text_primary</item>
     </style>
 
-    <style name="TextAppearance.Peel.Title" parent="TextAppearance.Material3.TitleMedium">
+    <style name="TextAppearance.Minimal.Title" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:textSize">@dimen/text_title</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:letterSpacing">-0.02</item>
-        <item name="android:textColor">@color/peel_text_primary</item>
+        <item name="android:textColor">@color/minimal_text_primary</item>
     </style>
 
-    <style name="TextAppearance.Peel.Body" parent="TextAppearance.Material3.BodyMedium">
+    <style name="TextAppearance.Minimal.Body" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:textSize">@dimen/text_body</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:textColor">@color/peel_text_primary</item>
+        <item name="android:textColor">@color/minimal_text_primary</item>
     </style>
 
-    <style name="TextAppearance.Peel.Chip" parent="TextAppearance.Material3.LabelMedium">
+    <style name="TextAppearance.Minimal.Chip" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:textSize">@dimen/text_chip</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:letterSpacing">0</item>
-        <item name="android:textColor">@color/peel_text_primary</item>
+        <item name="android:textColor">@color/minimal_text_primary</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
-    <style name="TextAppearance.Peel.Caption" parent="TextAppearance.Material3.LabelSmall">
+    <style name="TextAppearance.Minimal.Caption" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textSize">@dimen/text_caption</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:letterSpacing">0.05</item>
-        <item name="android:textColor">@color/peel_text_muted</item>
+        <item name="android:textColor">@color/minimal_text_muted</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
     <!-- Pill chip -->
-    <style name="Widget.Peel.Chip" parent="android:Widget">
+    <style name="Widget.Minimal.Chip" parent="android:Widget">
         <item name="android:background">@drawable/chip_pill</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingTop">@dimen/chip_padding_vertical</item>
         <item name="android:paddingBottom">@dimen/chip_padding_vertical</item>
         <item name="android:paddingStart">@dimen/chip_padding_horizontal</item>
         <item name="android:paddingEnd">@dimen/chip_padding_horizontal</item>
-        <item name="android:textAppearance">@style/TextAppearance.Peel.Chip</item>
+        <item name="android:textAppearance">@style/TextAppearance.Minimal.Chip</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
 
     <!-- Slider -->
-    <style name="Widget.Peel.Slider" parent="Widget.AppCompat.SeekBar">
+    <style name="Widget.Minimal.Slider" parent="Widget.AppCompat.SeekBar">
         <item name="android:progressDrawable">@drawable/slider_track</item>
         <item name="android:thumb">@drawable/slider_thumb</item>
         <item name="android:splitTrack">false</item>
@@ -264,14 +264,14 @@ The night-qualified `themes.xml` is a Phase-1 duplicate of the default. The laun
     </style>
 
     <!-- Themes -->
-    <style name="Theme.Peel" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/peel_background</item>
+    <style name="Theme.Minimal" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/minimal_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
-    <style name="Theme.Peel.ControlCenter" parent="Theme.Peel">
+    <style name="Theme.Minimal.ControlCenter" parent="Theme.Minimal">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@null</item>
@@ -304,12 +304,12 @@ git commit -m "feat: type tokens, chip and slider styles"
 ## Task 3: Rename SMS → Messages
 
 **Files:**
-- Modify: `app/src/main/kotlin/com/peel/launcher/AppTile.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/AppTile.kt`
 - Modify: `app/src/main/res/values/strings.xml`
-- Modify: `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt`
+- Modify: `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt`
 - Move: `app/src/main/res/drawable/ic_sms.xml` → `app/src/main/res/drawable/ic_messages.xml`
 
-- [ ] **Step 1: Update `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt`** to expect `Messages`
+- [ ] **Step 1: Update `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt`** to expect `Messages`
 
 Replace the four-tile assertion block:
 
@@ -328,7 +328,7 @@ fun `AppTile_defaultTiles returns the four core apps in grid order`() {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.AppTileTest`
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.AppTileTest`
 Expected: FAIL — current label is "SMS".
 
 - [ ] **Step 3: Rename the drawable file**
@@ -345,7 +345,7 @@ Replace any string resource currently named for SMS. Open the file and:
 - If a `<string name="tile_sms">SMS</string>` entry exists, rename it to `<string name="tile_messages">Messages</string>`.
 - If `tile_sms` is not present (label is hard-coded in `AppTile.kt`), no change here.
 
-- [ ] **Step 5: Update `app/src/main/kotlin/com/peel/launcher/AppTile.kt`**
+- [ ] **Step 5: Update `app/src/main/kotlin/com/minimal/launcher/AppTile.kt`**
 
 Replace the second tile entry:
 
@@ -366,10 +366,10 @@ Expected: PASS — including the updated `AppTileTest`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/AppTile.kt \
+git add app/src/main/kotlin/com/minimal/launcher/AppTile.kt \
         app/src/main/res/values/strings.xml \
         app/src/main/res/drawable/ic_messages.xml \
-        app/src/test/kotlin/com/peel/launcher/AppTileTest.kt
+        app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt
 git commit -m "refactor: rename SMS tile to Messages"
 ```
 
@@ -466,7 +466,7 @@ These are stroke-based vector drawables matching the design mockups. ViewBox `0 
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:strokeColor="@color/peel_icon"
+        android:strokeColor="@color/minimal_icon"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
@@ -485,7 +485,7 @@ These are stroke-based vector drawables matching the design mockups. ViewBox `0 
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:strokeColor="@color/peel_icon"
+        android:strokeColor="@color/minimal_icon"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
@@ -504,14 +504,14 @@ These are stroke-based vector drawables matching the design mockups. ViewBox `0 
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:strokeColor="@color/peel_icon"
+        android:strokeColor="@color/minimal_icon"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="@android:color/transparent"
         android:pathData="M23,19a2,2 0 0 1 -2,2H3a2,2 0 0 1 -2,-2V8a2,2 0 0 1 2,-2h4l2,-3h6l2,3h4a2,2 0 0 1 2,2z" />
     <path
-        android:strokeColor="@color/peel_icon"
+        android:strokeColor="@color/minimal_icon"
         android:strokeWidth="1.6"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
@@ -532,7 +532,7 @@ Source: `https://upload.wikimedia.org/wikipedia/commons/b/b0/Claude_AI_symbol.sv
     android:viewportWidth="100"
     android:viewportHeight="100">
     <path
-        android:fillColor="@color/peel_icon"
+        android:fillColor="@color/minimal_icon"
         android:pathData="m19.6,66.5 19.7,-11 0.3,-1 -0.3,-0.5h-1l-3.3,-0.2 -11.2,-0.3L14,53l-9.5,-0.5 -2.4,-0.5L0,49l0.2,-1.5 2,-1.3 2.9,0.2 6.3,0.5 9.5,0.6 6.9,0.4L38,49.1h1.6l0.2,-0.7 -0.5,-0.4 -0.4,-0.4L29,41 18.4,34l-5.6,-4.1 -3,-2 -1.5,-2 -0.6,-4.2 2.7,-3 3.7,0.3 0.9,0.2 3.7,2.9 8,6.1L37,36l1.5,1.2 0.6,-0.4 0.1,-0.3 -0.7,-1.1L33,25 27,14.6 24.3,10.3 23.6,7.7c-0.3,-1 -0.4,-2 -0.4,-3l3,-4.2L28,0l4.2,0.6L33.8,2l2.6,6 4.1,9.3L47,29.9l2,3.8 1,3.4 0.3,1h0.7v-0.5l0.5,-7.2 1,-8.7 1,-11.2 0.3,-3.2 1.6,-3.8 3,-2L61,2.6l2,2.9 -0.3,1.8 -1.1,7.7L59,27.1l-1.5,8.2h0.9l1,-1.1 4.1,-5.4 6.9,-8.6 3,-3.5L77,13l2.3,-1.8h4.3l3.1,4.7 -1.4,4.9 -4.4,5.6 -3.7,4.7 -5.3,7.1 -3.2,5.7 0.3,0.4h0.7l12,-2.6 6.4,-1.1 7.6,-1.3 3.5,1.6 0.4,1.6 -1.4,3.4 -8.2,2 -9.6,2 -14.3,3.3 -0.2,0.1 0.2,0.3 6.4,0.6 2.8,0.2h6.8l12.6,1 3.3,2 1.9,2.7 -0.3,2 -5.1,2.6 -6.8,-1.6 -16,-3.8 -5.4,-1.3h-0.8v0.4l4.6,4.5 8.3,7.5L89,80.1l0.5,2.4 -1.3,2 -1.4,-0.2 -9.2,-7 -3.6,-3 -8,-6.8h-0.5v0.7l1.8,2.7 9.8,14.7 0.5,4.5 -0.7,1.4 -2.6,1 -2.7,-0.6 -5.8,-8 -6,-9 -4.7,-8.2 -0.5,0.4 -2.9,30.2 -1.3,1.5 -3,1.2 -2.5,-2 -1.4,-3 1.4,-6.2 1.6,-8 1.3,-6.4 1.2,-7.9 0.7,-2.6v-0.2H49L43,72l-9,12.3 -7.2,7.6 -1.7,0.7 -3,-1.5 0.3,-2.8L24,86l10,-12.8 6,-7.9 4,-4.6 -0.1,-0.5h-0.3L17.2,77.4l-4.7,0.6 -2,-2 0.2,-3 1,-1z" />
 </vector>
 ```
@@ -558,10 +558,10 @@ git commit -m "feat: stroke icon vectors and Wikimedia Claude mark"
 
 **Files:**
 - Rewrite: `app/src/main/res/layout/item_app_tile.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/AppTile.kt` (add `backgroundRes`)
-- Modify: `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt`
-- Modify: `app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt`
-- Modify: `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/AppTile.kt` (add `backgroundRes`)
+- Modify: `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt`
+- Modify: `app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt`
+- Modify: `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt`
 
 - [ ] **Step 1: Update `AppTileTest.kt`** to assert per-tile background drawable wired
 
@@ -603,7 +603,7 @@ fun `clicking a tile invokes the onTileClick callback with that tile`() {
     val adapter = AppTileAdapter(tiles) { clicked = it }
 
     val app: android.app.Application = ApplicationProvider.getApplicationContext()
-    app.setTheme(R.style.Theme_Peel)
+    app.setTheme(R.style.Theme_Minimal)
     val holder = adapter.onCreateViewHolder(
         android.widget.FrameLayout(app),
         0,
@@ -617,13 +617,13 @@ fun `clicking a tile invokes the onTileClick callback with that tile`() {
 
 - [ ] **Step 3: Run tests to verify they fail**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.AppTileTest --tests com.peel.launcher.AppTileAdapterTest`
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.AppTileTest --tests com.minimal.launcher.AppTileAdapterTest`
 Expected: FAIL — `backgroundRes` does not exist on `AppTile`, and the adapter still references `MaterialCardView`.
 
 - [ ] **Step 4: Add `backgroundRes` to `AppTile.kt`**
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -714,7 +714,7 @@ In `item_app_tile.xml`, change `android:layout_margin="@dimen/tile_gap"` to `and
 - [ ] **Step 7: Update `AppTileAdapter.kt`**
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.LayoutInflater
 import android.view.View
@@ -759,11 +759,11 @@ Expected: PASS — `AppTileTest`, `AppTileAdapterTest`, `AppLauncherTest`, `Swip
 - [ ] **Step 9: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/AppTile.kt \
-        app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt \
+git add app/src/main/kotlin/com/minimal/launcher/AppTile.kt \
+        app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt \
         app/src/main/res/layout/item_app_tile.xml \
-        app/src/test/kotlin/com/peel/launcher/AppTileTest.kt \
-        app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt
+        app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt \
+        app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt
 git commit -m "refactor: tile uses FrameLayout + per-tile background"
 ```
 
@@ -773,7 +773,7 @@ git commit -m "refactor: tile uses FrameLayout + per-tile background"
 
 **Files:**
 - Modify: `app/src/main/res/layout/activity_main.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/MainActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt`
 
 - [ ] **Step 1: Rewrite `activity_main.xml`**
 
@@ -785,7 +785,7 @@ git commit -m "refactor: tile uses FrameLayout + per-tile background"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peel_background">
+    android:background="@color/minimal_background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tile_grid"
@@ -806,7 +806,7 @@ git commit -m "refactor: tile uses FrameLayout + per-tile background"
 Replace `MainActivity.kt` with:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.content.Intent
 import android.graphics.Rect
@@ -882,7 +882,7 @@ Expected: PASS — `gridShowsFourTiles`, `gridIsVisible` still green.
 
 ```bash
 git add app/src/main/res/layout/activity_main.xml \
-        app/src/main/kotlin/com/peel/launcher/MainActivity.kt
+        app/src/main/kotlin/com/minimal/launcher/MainActivity.kt
 git commit -m "feat: centered home grid with 480dp max width and 14dp spacing"
 ```
 
@@ -891,15 +891,15 @@ git commit -m "feat: centered home grid with 480dp max width and 14dp spacing"
 ## Task 8: Tile press animation (spring scale + alpha)
 
 **Files:**
-- Modify: `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt`
-- Create: `app/src/test/kotlin/com/peel/launcher/TilePressAnimationTest.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/TilePressAnimationTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
-Create `app/src/test/kotlin/com/peel/launcher/TilePressAnimationTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/TilePressAnimationTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.MotionEvent
 import androidx.test.core.app.ApplicationProvider
@@ -917,7 +917,7 @@ class TilePressAnimationTest {
         val tiles = AppTile.defaultTiles()
         val adapter = AppTileAdapter(tiles) { /* no-op */ }
         val app: android.app.Application = ApplicationProvider.getApplicationContext()
-        app.setTheme(R.style.Theme_Peel)
+        app.setTheme(R.style.Theme_Minimal)
 
         val holder = adapter.onCreateViewHolder(android.widget.FrameLayout(app), 0)
         adapter.onBindViewHolder(holder, 0)
@@ -950,7 +950,7 @@ class TilePressAnimationTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.TilePressAnimationTest`
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.TilePressAnimationTest`
 Expected: FAIL — no press animation wired yet.
 
 - [ ] **Step 3: Add press animation to `AppTileAdapter.kt`**
@@ -990,14 +990,14 @@ The `false` return keeps the existing `OnClickListener` working — the touch is
 
 - [ ] **Step 4: Run press-animation test**
 
-Run: `./gradlew :app:testDebugUnitTest --tests com.peel.launcher.TilePressAnimationTest`
+Run: `./gradlew :app:testDebugUnitTest --tests com.minimal.launcher.TilePressAnimationTest`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt \
-        app/src/test/kotlin/com/peel/launcher/TilePressAnimationTest.kt
+git add app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt \
+        app/src/test/kotlin/com/minimal/launcher/TilePressAnimationTest.kt
 git commit -m "feat: tile spring press animation"
 ```
 
@@ -1018,7 +1018,7 @@ git commit -m "feat: tile spring press animation"
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/peel_chip" />
+    <solid android:color="@color/minimal_chip" />
     <corners android:radius="999dp" />
 </shape>
 ```
@@ -1029,7 +1029,7 @@ git commit -m "feat: tile spring press animation"
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="@color/peel_text_primary" />
+    <solid android:color="@color/minimal_text_primary" />
     <size
         android:width="@dimen/slider_thumb_size"
         android:height="@dimen/slider_thumb_size" />
@@ -1043,7 +1043,7 @@ git commit -m "feat: tile spring press animation"
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <solid android:color="@color/peel_chip" />
+            <solid android:color="@color/minimal_chip" />
             <corners android:radius="2dp" />
             <size android:height="@dimen/slider_track_height" />
         </shape>
@@ -1051,7 +1051,7 @@ git commit -m "feat: tile spring press animation"
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <solid android:color="@color/peel_text_primary" />
+                <solid android:color="@color/minimal_text_primary" />
                 <corners android:radius="2dp" />
                 <size android:height="@dimen/slider_track_height" />
             </shape>
@@ -1066,7 +1066,7 @@ git commit -m "feat: tile spring press animation"
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/peel_panel" />
+    <solid android:color="@color/minimal_panel" />
     <corners
         android:topLeftRadius="0dp"
         android:topRightRadius="0dp"
@@ -1108,7 +1108,7 @@ git commit -m "feat: Control Center surface, slider, chip drawables"
 
 **Files:**
 - Rewrite: `app/src/main/res/layout/activity_control_center.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 - Add: a string resource `silent_mode` set to `"Silent mode"` (if not already present)
 
 - [ ] **Step 1: Confirm strings**
@@ -1163,11 +1163,11 @@ The existing layout already uses several of these; the only required addition is
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/brightness"
-            android:textAppearance="@style/TextAppearance.Peel.Caption" />
+            android:textAppearance="@style/TextAppearance.Minimal.Caption" />
 
         <SeekBar
             android:id="@+id/brightness_seek"
-            style="@style/Widget.Peel.Slider"
+            style="@style/Widget.Minimal.Slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="255" />
@@ -1178,11 +1178,11 @@ The existing layout already uses several of these; the only required addition is
             android:layout_marginTop="22dp"
             android:layout_marginBottom="10dp"
             android:text="@string/volume"
-            android:textAppearance="@style/TextAppearance.Peel.Caption" />
+            android:textAppearance="@style/TextAppearance.Minimal.Caption" />
 
         <SeekBar
             android:id="@+id/volume_seek"
-            style="@style/Widget.Peel.Slider"
+            style="@style/Widget.Minimal.Slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -1195,7 +1195,7 @@ The existing layout already uses several of these; the only required addition is
 
             <TextView
                 android:id="@+id/wifi_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/chip_gap"
@@ -1204,7 +1204,7 @@ The existing layout already uses several of these; the only required addition is
 
             <TextView
                 android:id="@+id/bluetooth_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/chip_gap"
@@ -1213,7 +1213,7 @@ The existing layout already uses several of these; the only required addition is
 
             <TextView
                 android:id="@+id/settings_btn"
-                style="@style/Widget.Peel.Chip"
+                style="@style/Widget.Minimal.Chip"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1222,7 +1222,7 @@ The existing layout already uses several of these; the only required addition is
 
         <FrameLayout
             android:id="@+id/silent_toggle"
-            style="@style/Widget.Peel.Chip"
+            style="@style/Widget.Minimal.Chip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp">
@@ -1232,7 +1232,7 @@ The existing layout already uses several of these; the only required addition is
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:text="@string/silent_mode"
-                android:textAppearance="@style/TextAppearance.Peel.Chip" />
+                android:textAppearance="@style/TextAppearance.Minimal.Chip" />
 
             <TextView
                 android:id="@+id/silent_toggle_state"
@@ -1240,8 +1240,8 @@ The existing layout already uses several of these; the only required addition is
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
                 android:text="@string/silent_mode_off"
-                android:textAppearance="@style/TextAppearance.Peel.Body"
-                android:textColor="@color/peel_text_muted" />
+                android:textAppearance="@style/TextAppearance.Minimal.Body"
+                android:textColor="@color/minimal_text_muted" />
         </FrameLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -1250,7 +1250,7 @@ The existing layout already uses several of these; the only required addition is
 - [ ] **Step 3: Replace `ControlCenterActivity.kt`**
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -1437,7 +1437,7 @@ Expected: PASS — `gridShowsFourTiles` and `gridIsVisible` still green.
 ```bash
 git add app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml \
-        app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt
+        app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt
 git commit -m "feat: refined Control Center surface, sliders, chips, and motion"
 ```
 
@@ -1455,22 +1455,22 @@ This task is a manual checkpoint — no source changes.
 adb devices
 ```
 
-Expected: at least one entry showing `emulator-5554  device`. If empty, start the emulator from Android Studio's Device Manager (`Peel_Test_API35`).
+Expected: at least one entry showing `emulator-5554  device`. If empty, start the emulator from Android Studio's Device Manager (`Minimal_Test_API35`).
 
 - [ ] **Step 2: Install and launch**
 
 ```bash
-cd /Users/nashvogeltanz/peel-launcher
+cd /Users/nashvogeltanz/minimalist-clicks-communicator-launcher
 ./gradlew installDebug
-adb shell cmd package set-home-activity com.peel.launcher/com.peel.launcher.MainActivity
+adb shell cmd package set-home-activity com.minimal.launcher/com.minimal.launcher.MainActivity
 adb shell input keyevent KEYCODE_HOME
 ```
 
 - [ ] **Step 3: Capture home screen**
 
 ```bash
-adb shell screencap -p /sdcard/peel_home.png
-adb pull /sdcard/peel_home.png ~/peel_home.png
+adb shell screencap -p /sdcard/minimal_home.png
+adb pull /sdcard/minimal_home.png ~/minimal_home.png
 ```
 
 Compare visually against the locked Section 4 mockup (`.superpowers/brainstorm/88692-1777942121/content/design-4-home.html`):
@@ -1484,8 +1484,8 @@ Compare visually against the locked Section 4 mockup (`.superpowers/brainstorm/8
 Open the launcher, swipe down from below the status bar, then:
 
 ```bash
-adb shell screencap -p /sdcard/peel_cc.png
-adb pull /sdcard/peel_cc.png ~/peel_cc.png
+adb shell screencap -p /sdcard/minimal_cc.png
+adb pull /sdcard/minimal_cc.png ~/minimal_cc.png
 ```
 
 Compare against Section 5 mockup (`design-5-cc.html`):

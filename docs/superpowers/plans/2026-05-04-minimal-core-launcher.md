@@ -1,8 +1,8 @@
-# Peel Core Launcher (Phase 1) Implementation Plan
+# Minimal Core Launcher (Phase 1) Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the Peel launcher's core: a 2x2 home grid that launches four allowed apps, with a swipe-down control center for system toggles. Targets the Android emulator (API 35); no Clicks hardware dependencies.
+**Goal:** Build the Minimal launcher's core: a 2x2 home grid that launches four allowed apps, with a swipe-down control center for system toggles. Targets the Android emulator (API 35); no Clicks hardware dependencies.
 
 **Architecture:** Single-Activity launcher (`MainActivity`) registered as `category.HOME` so Android treats it as a home app. A separate `ControlCenterActivity` is launched by a swipe-down gesture from the home screen and styled as a translucent overlay. App tiles are simple `MaterialCardView` instances bound from a list of `AppTile` data objects; tap intents resolve via `PackageManager.getLaunchIntentForPackage`. System controls in the control center use stock Android APIs (`AudioManager`, brightness via `Settings.System`, settings deep-link); WiFi/Bluetooth/cellular toggles are intentionally read-only on Android 10+ and route the user to the relevant settings panel — this matches platform reality and is documented in the plan.
 
@@ -32,7 +32,7 @@
 After all tasks complete, the repo layout will be:
 
 ```
-peel-launcher/
+minimalist-clicks-communicator-launcher/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
@@ -49,7 +49,7 @@ peel-launcher/
 │   └── src/
 │       ├── main/
 │       │   ├── AndroidManifest.xml
-│       │   ├── kotlin/com/peel/launcher/
+│       │   ├── kotlin/com/minimal/launcher/
 │       │   │   ├── MainActivity.kt           # home screen
 │       │   │   ├── ControlCenterActivity.kt  # swipe-down overlay
 │       │   │   ├── AppTile.kt                # data model
@@ -72,17 +72,17 @@ peel-launcher/
 │       │           ├── ic_camera.xml
 │       │           └── ic_claude.xml
 │       ├── test/                             # JVM unit tests (Robolectric)
-│       │   └── kotlin/com/peel/launcher/
+│       │   └── kotlin/com/minimal/launcher/
 │       │       ├── AppTileTest.kt
 │       │       ├── AppLauncherTest.kt
 │       │       └── AppTileAdapterTest.kt
 │       └── androidTest/                      # instrumented Espresso tests
-│           └── kotlin/com/peel/launcher/
+│           └── kotlin/com/minimal/launcher/
 │               ├── MainActivityTest.kt
 │               └── ControlCenterActivityTest.kt
 └── docs/
     └── superpowers/plans/
-        └── 2026-05-04-peel-core-launcher.md  # this file
+        └── 2026-05-04-minimal-core-launcher.md  # this file
 ```
 
 ---
@@ -140,17 +140,17 @@ Expected: ~3-5 GB download. `arm64-v8a` is required on Apple Silicon — do NOT 
 
 ```bash
 echo "no" | avdmanager create avd \
-  -n Peel_Test_API35 \
+  -n Minimal_Test_API35 \
   -k "system-images;android-35;google_apis;arm64-v8a" \
   -d pixel_7
 ```
 
-Expected: `Created AVD 'Peel_Test_API35'`.
+Expected: `Created AVD 'Minimal_Test_API35'`.
 
 - [ ] **Step 6: Boot emulator in background and wait for it**
 
 ```bash
-emulator -avd Peel_Test_API35 -no-snapshot-load &
+emulator -avd Minimal_Test_API35 -no-snapshot-load &
 adb wait-for-device
 adb shell getprop sys.boot_completed | tr -d '\r'
 ```
@@ -181,7 +181,7 @@ Expected: `emulator-5554   device` listed. JDK is already 17 (verified separatel
 - `app/build.gradle.kts`
 - `app/proguard-rules.pro`
 - `app/src/main/AndroidManifest.xml`
-- `app/src/main/kotlin/com/peel/launcher/MainActivity.kt`
+- `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt`
 - `app/src/main/res/layout/activity_main.xml`
 - `app/src/main/res/values/strings.xml`
 - `app/src/main/res/values/themes.xml`
@@ -192,7 +192,7 @@ Expected: `emulator-5554   device` listed. JDK is already 17 (verified separatel
 - [ ] **Step 1: Generate Gradle wrapper**
 
 ```bash
-cd ~/peel-launcher
+cd ~/minimalist-clicks-communicator-launcher
 gradle wrapper --gradle-version 8.9 --distribution-type bin
 ```
 
@@ -223,7 +223,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Peel"
+rootProject.name = "Minimal"
 include(":app")
 ```
 
@@ -254,11 +254,11 @@ plugins {
 }
 
 android {
-    namespace = "com.peel.launcher"
+    namespace = "com.minimal.launcher"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.peel.launcher"
+        applicationId = "com.minimal.launcher"
         minSdk = 34
         targetSdk = 35
         versionCode = 1
@@ -328,7 +328,7 @@ dependencies {
         android:icon="@android:drawable/sym_def_app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Peel"
+        android:theme="@style/Theme.Minimal"
         tools:targetApi="35">
 
         <activity
@@ -337,7 +337,7 @@ dependencies {
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
-            android:theme="@style/Theme.Peel">
+            android:theme="@style/Theme.Minimal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -363,10 +363,10 @@ dependencies {
 </data-extraction-rules>
 ```
 
-- [ ] **Step 9: Write `app/src/main/kotlin/com/peel/launcher/MainActivity.kt`**
+- [ ] **Step 9: Write `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt`**
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -389,12 +389,12 @@ class MainActivity : AppCompatActivity() {
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peel_background">
+    android:background="@color/minimal_background">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_peel"
+        android:text="@string/hello_minimal"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -408,8 +408,8 @@ class MainActivity : AppCompatActivity() {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Peel</string>
-    <string name="hello_peel">Peel</string>
+    <string name="app_name">Minimal</string>
+    <string name="hello_minimal">Minimal</string>
 </resources>
 ```
 
@@ -418,7 +418,7 @@ class MainActivity : AppCompatActivity() {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="peel_background">#000000</color>
+    <color name="minimal_background">#000000</color>
 </resources>
 ```
 
@@ -427,8 +427,8 @@ class MainActivity : AppCompatActivity() {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Peel" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/peel_background</item>
+    <style name="Theme.Minimal" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/minimal_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
@@ -439,7 +439,7 @@ class MainActivity : AppCompatActivity() {
 - [ ] **Step 14: Build the debug APK**
 
 ```bash
-cd ~/peel-launcher
+cd ~/minimalist-clicks-communicator-launcher
 ./gradlew assembleDebug
 ```
 
@@ -458,16 +458,16 @@ sdk.dir=/opt/homebrew/share/android-commandlinetools
 ```bash
 adb devices                          # confirm emulator-5554 device
 ./gradlew installDebug
-adb shell am start -n com.peel.launcher/.MainActivity
+adb shell am start -n com.minimal.launcher/.MainActivity
 ```
 
-Expected: emulator screen shows a black background with "Peel" centered.
+Expected: emulator screen shows a black background with "Minimal" centered.
 
 - [ ] **Step 16: Capture a screenshot for verification**
 
 ```bash
-adb exec-out screencap -p > /tmp/peel-task1-smoke.png
-ls -lh /tmp/peel-task1-smoke.png
+adb exec-out screencap -p > /tmp/minimal-task1-smoke.png
+ls -lh /tmp/minimal-task1-smoke.png
 ```
 
 Expected: PNG file >5KB exists. (Optional: open it to eyeball.)
@@ -494,8 +494,8 @@ Overwrite `app/src/main/res/values/colors.xml`:
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Background -->
-    <color name="peel_background">#000000</color>
-    <color name="peel_surface">#121212</color>
+    <color name="minimal_background">#000000</color>
+    <color name="minimal_surface">#121212</color>
 
     <!-- App tile colors -->
     <color name="tile_phone">#00FF00</color>
@@ -516,7 +516,7 @@ Overwrite `app/src/main/res/values/colors.xml`:
 
 ```bash
 git add app/src/main/res/values/colors.xml
-git commit -m "feat: add Peel brand color palette"
+git commit -m "feat: add Minimal brand color palette"
 ```
 
 ---
@@ -532,14 +532,14 @@ git commit -m "feat: add Peel brand color palette"
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Peel" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/peel_background</item>
+    <style name="Theme.Minimal" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/minimal_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
-    <style name="Theme.Peel.ControlCenter" parent="Theme.Peel">
+    <style name="Theme.Minimal.ControlCenter" parent="Theme.Minimal">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
@@ -549,7 +549,7 @@ git commit -m "feat: add Peel brand color palette"
 
 - [ ] **Step 2: Create values-night/themes.xml**
 
-Same contents — Peel is always dark, so no behavior change between modes.
+Same contents — Minimal is always dark, so no behavior change between modes.
 
 ```bash
 mkdir -p app/src/main/res/values-night
@@ -561,10 +561,10 @@ cp app/src/main/res/values/themes.xml app/src/main/res/values-night/themes.xml
 Edit `app/src/main/AndroidManifest.xml`. The `<application>` tag should set:
 
 ```xml
-android:theme="@style/Theme.Peel"
+android:theme="@style/Theme.Minimal"
 ```
 
-(Already set by Android Studio bootstrap — verify it points to `Theme.Peel`, rename if needed.)
+(Already set by Android Studio bootstrap — verify it points to `Theme.Minimal`, rename if needed.)
 
 - [ ] **Step 4: Run on emulator**
 
@@ -574,7 +574,7 @@ Click Run. Expected: black screen instead of light gray, no action bar.
 
 ```bash
 git add app/src/main/res
-git commit -m "feat: dark edge-to-edge Peel theme"
+git commit -m "feat: dark edge-to-edge Minimal theme"
 ```
 
 ---
@@ -582,8 +582,8 @@ git commit -m "feat: dark edge-to-edge Peel theme"
 ## Task 4: AppTile data model + unit test
 
 **Files:**
-- Create: `app/src/main/kotlin/com/peel/launcher/AppTile.kt`
-- Create: `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt`
+- Create: `app/src/main/kotlin/com/minimal/launcher/AppTile.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt`
 - Modify: `app/build.gradle.kts` (add JUnit dep — likely already present)
 
 - [ ] **Step 1: Verify JUnit 4 + Robolectric in app/build.gradle.kts**
@@ -600,10 +600,10 @@ After editing, click "Sync Now" in the yellow banner.
 
 - [ ] **Step 2: Write the failing test**
 
-Create `app/src/test/kotlin/com/peel/launcher/AppTileTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -644,10 +644,10 @@ In Android Studio: right-click `AppTileTest` → Run. Expected: compile error �
 
 - [ ] **Step 4: Implement AppTile**
 
-Create `app/src/main/kotlin/com/peel/launcher/AppTile.kt`:
+Create `app/src/main/kotlin/com/minimal/launcher/AppTile.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -706,12 +706,12 @@ Run `AppTileTest`. Expected: both tests PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/AppTile.kt \
+git add app/src/main/kotlin/com/minimal/launcher/AppTile.kt \
         app/src/main/res/drawable/ic_phone.xml \
         app/src/main/res/drawable/ic_sms.xml \
         app/src/main/res/drawable/ic_camera.xml \
         app/src/main/res/drawable/ic_claude.xml \
-        app/src/test/kotlin/com/peel/launcher/AppTileTest.kt \
+        app/src/test/kotlin/com/minimal/launcher/AppTileTest.kt \
         app/build.gradle.kts
 git commit -m "feat: AppTile data model with four-app default config"
 ```
@@ -721,15 +721,15 @@ git commit -m "feat: AppTile data model with four-app default config"
 ## Task 5: AppLauncher (package → intent resolver) with tests
 
 **Files:**
-- Create: `app/src/main/kotlin/com/peel/launcher/AppLauncher.kt`
-- Create: `app/src/test/kotlin/com/peel/launcher/AppLauncherTest.kt`
+- Create: `app/src/main/kotlin/com/minimal/launcher/AppLauncher.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/AppLauncherTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
-Create `app/src/test/kotlin/com/peel/launcher/AppLauncherTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/AppLauncherTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.content.Context
 import android.content.Intent
@@ -780,10 +780,10 @@ Run `AppLauncherTest`. Expected: compile error — `AppLauncher` does not exist.
 
 - [ ] **Step 3: Implement AppLauncher**
 
-Create `app/src/main/kotlin/com/peel/launcher/AppLauncher.kt`:
+Create `app/src/main/kotlin/com/minimal/launcher/AppLauncher.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.content.Context
 import android.content.Intent
@@ -808,8 +808,8 @@ Expected: both tests PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/AppLauncher.kt \
-        app/src/test/kotlin/com/peel/launcher/AppLauncherTest.kt
+git add app/src/main/kotlin/com/minimal/launcher/AppLauncher.kt \
+        app/src/test/kotlin/com/minimal/launcher/AppLauncherTest.kt
 git commit -m "feat: AppLauncher resolves launch intent by package name"
 ```
 
@@ -869,7 +869,7 @@ Sync Gradle.
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peel_background">
+    android:background="@color/minimal_background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tile_grid"
@@ -896,16 +896,16 @@ git commit -m "feat: 2x2 home grid scaffold layout"
 ## Task 7: AppTileAdapter + bind to MainActivity
 
 **Files:**
-- Create: `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt`
-- Create: `app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt`
-- Modify: `app/src/main/kotlin/com/peel/launcher/MainActivity.kt`
+- Create: `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt`
 
 - [ ] **Step 1: Write the failing adapter test**
 
-Create `app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
@@ -949,10 +949,10 @@ Expected: compile error — `AppTileAdapter` not defined.
 
 - [ ] **Step 3: Implement AppTileAdapter**
 
-Create `app/src/main/kotlin/com/peel/launcher/AppTileAdapter.kt`:
+Create `app/src/main/kotlin/com/minimal/launcher/AppTileAdapter.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.LayoutInflater
 import android.view.View
@@ -1000,7 +1000,7 @@ Expected: PASS.
 Replace `MainActivity.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.os.Bundle
 import android.widget.Toast
@@ -1040,7 +1040,7 @@ Click Run. Expected: black screen with 2x2 colored tiles (green / blue / gray / 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ app/src/test/kotlin/com/peel/launcher/AppTileAdapterTest.kt
+git add app/src/main/kotlin/com/minimal/launcher/ app/src/test/kotlin/com/minimal/launcher/AppTileAdapterTest.kt
 git commit -m "feat: render four-tile grid with tap-to-launch and missing-app fallback"
 ```
 
@@ -1062,7 +1062,7 @@ In `AndroidManifest.xml`, replace the MainActivity `<activity>` block:
     android:launchMode="singleTask"
     android:screenOrientation="portrait"
     android:stateNotNeeded="true"
-    android:theme="@style/Theme.Peel">
+    android:theme="@style/Theme.Minimal">
     <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -1074,19 +1074,19 @@ In `AndroidManifest.xml`, replace the MainActivity `<activity>` block:
 
 - [ ] **Step 2: Run on emulator and set as default home**
 
-Run app. Then on the emulator, press the home button (circle icon). Android prompts "Use Peel as Home?" — pick "Always".
+Run app. Then on the emulator, press the home button (circle icon). Android prompts "Use Minimal as Home?" — pick "Always".
 
-Expected: home button now returns to the Peel grid.
+Expected: home button now returns to the Minimal grid.
 
 - [ ] **Step 3: Verify recents behavior**
 
-Open the Settings app from the emulator's app drawer (drag-up gesture still works on the system UI). Press home. Press home again. Should return to Peel cleanly without flicker.
+Open the Settings app from the emulator's app drawer (drag-up gesture still works on the system UI). Press home. Press home again. Should return to Minimal cleanly without flicker.
 
 - [ ] **Step 4: Commit**
 
 ```bash
 git add app/src/main/AndroidManifest.xml
-git commit -m "feat: register Peel as a HOME launcher"
+git commit -m "feat: register Minimal as a HOME launcher"
 ```
 
 ---
@@ -1094,7 +1094,7 @@ git commit -m "feat: register Peel as a HOME launcher"
 ## Task 9: Instrumented test — home grid is rendered
 
 **Files:**
-- Create: `app/src/androidTest/kotlin/com/peel/launcher/MainActivityTest.kt`
+- Create: `app/src/androidTest/kotlin/com/minimal/launcher/MainActivityTest.kt`
 - Modify: `app/build.gradle.kts` (Espresso deps if missing)
 
 - [ ] **Step 1: Verify Espresso dependencies**
@@ -1110,7 +1110,7 @@ androidTestImplementation("androidx.test:rules:1.6.1")
 - [ ] **Step 2: Write the test**
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
@@ -1161,15 +1161,15 @@ git commit -m "test: instrumented tests verify home grid renders four tiles"
 ## Task 10: SwipeDownDetector helper + unit test
 
 **Files:**
-- Create: `app/src/main/kotlin/com/peel/launcher/SwipeDownDetector.kt`
-- Create: `app/src/test/kotlin/com/peel/launcher/SwipeDownDetectorTest.kt`
+- Create: `app/src/main/kotlin/com/minimal/launcher/SwipeDownDetector.kt`
+- Create: `app/src/test/kotlin/com/minimal/launcher/SwipeDownDetectorTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
-Create `app/src/test/kotlin/com/peel/launcher/SwipeDownDetectorTest.kt`:
+Create `app/src/test/kotlin/com/minimal/launcher/SwipeDownDetectorTest.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -1236,10 +1236,10 @@ Expected: compile error.
 
 - [ ] **Step 3: Implement SwipeDownDetector**
 
-Create `app/src/main/kotlin/com/peel/launcher/SwipeDownDetector.kt`:
+Create `app/src/main/kotlin/com/minimal/launcher/SwipeDownDetector.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.MotionEvent
 import android.view.View
@@ -1286,8 +1286,8 @@ Expected: 4/4 PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/SwipeDownDetector.kt \
-        app/src/test/kotlin/com/peel/launcher/SwipeDownDetectorTest.kt
+git add app/src/main/kotlin/com/minimal/launcher/SwipeDownDetector.kt \
+        app/src/test/kotlin/com/minimal/launcher/SwipeDownDetectorTest.kt
 git commit -m "feat: SwipeDownDetector recognizes top-edge downward fling"
 ```
 
@@ -1296,17 +1296,17 @@ git commit -m "feat: SwipeDownDetector recognizes top-edge downward fling"
 ## Task 11: Wire swipe-down on MainActivity to open ControlCenterActivity
 
 **Files:**
-- Modify: `app/src/main/kotlin/com/peel/launcher/MainActivity.kt`
-- Create: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/MainActivity.kt`
+- Create: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 - Create: `app/src/main/res/layout/activity_control_center.xml`
 - Modify: `app/src/main/AndroidManifest.xml`
 
 - [ ] **Step 1: Stub ControlCenterActivity**
 
-Create `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`:
+Create `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -1360,7 +1360,7 @@ In `AndroidManifest.xml`, inside `<application>`:
 <activity
     android:name=".ControlCenterActivity"
     android:exported="false"
-    android:theme="@style/Theme.Peel.ControlCenter" />
+    android:theme="@style/Theme.Minimal.ControlCenter" />
 ```
 
 - [ ] **Step 4: Attach swipe listener in MainActivity**
@@ -1385,7 +1385,7 @@ Swipe down anywhere on the home screen. Expected: translucent overlay appears wi
 - [ ] **Step 6: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ \
+git add app/src/main/kotlin/com/minimal/launcher/ \
         app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml \
         app/src/main/AndroidManifest.xml
@@ -1397,7 +1397,7 @@ git commit -m "feat: swipe down on home opens Control Center overlay"
 ## Task 12: Tap-outside-to-dismiss + swipe-up-to-dismiss for Control Center
 
 **Files:**
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 - Modify: `app/src/main/res/layout/activity_control_center.xml`
 
 - [ ] **Step 1: Add a foreground panel container to the layout**
@@ -1418,7 +1418,7 @@ Replace `activity_control_center.xml` with:
         android:id="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/peel_surface"
+        android:background="@color/minimal_surface"
         android:orientation="vertical"
         android:padding="24dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -1439,7 +1439,7 @@ Replace `activity_control_center.xml` with:
 Update `ControlCenterActivity.kt`:
 
 ```kotlin
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.os.Bundle
 import android.view.MotionEvent
@@ -1500,7 +1500,7 @@ Open the control center, then:
 - [ ] **Step 4: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt \
+git add app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt \
         app/src/main/res/layout/activity_control_center.xml
 git commit -m "feat: tap-outside and swipe-up dismiss for Control Center"
 ```
@@ -1512,7 +1512,7 @@ git commit -m "feat: tap-outside and swipe-up dismiss for Control Center"
 **Files:**
 - Modify: `app/src/main/res/layout/activity_control_center.xml`
 - Modify: `app/src/main/res/values/strings.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 - Modify: `app/src/main/AndroidManifest.xml`
 
 **Note on permissions:** Writing system brightness needs the special `WRITE_SETTINGS` permission, which on Android 6+ requires the user to grant it via `ACTION_MANAGE_WRITE_SETTINGS`. We'll detect this and route to settings.
@@ -1598,7 +1598,7 @@ Open Control Center, drag the slider. First time: it routes to system settings t
 - [ ] **Step 5: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt \
+git add app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt \
         app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml \
         app/src/main/AndroidManifest.xml
@@ -1612,7 +1612,7 @@ git commit -m "feat: brightness slider with WRITE_SETTINGS handoff"
 **Files:**
 - Modify: `app/src/main/res/layout/activity_control_center.xml`
 - Modify: `app/src/main/res/values/strings.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 
 - [ ] **Step 1: Add UI**
 
@@ -1665,7 +1665,7 @@ Drag volume slider — emulator volume indicator should reflect changes.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt \
+git add app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt \
         app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml
 git commit -m "feat: ringer volume slider in Control Center"
@@ -1678,7 +1678,7 @@ git commit -m "feat: ringer volume slider in Control Center"
 **Files:**
 - Modify: `app/src/main/res/layout/activity_control_center.xml`
 - Modify: `app/src/main/res/values/strings.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 
 - [ ] **Step 1: Add toggle UI**
 
@@ -1741,12 +1741,12 @@ Import: `com.google.android.material.button.MaterialButton`.
 
 - [ ] **Step 3: Test on emulator**
 
-Tap toggle. First time may route to DND settings — grant Peel access and retry. Toggle text flips between "Silent: On" and "Silent: Off".
+Tap toggle. First time may route to DND settings — grant Minimal access and retry. Toggle text flips between "Silent: On" and "Silent: Off".
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt \
+git add app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt \
         app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml
 git commit -m "feat: silent mode toggle with DND-permission fallback"
@@ -1756,12 +1756,12 @@ git commit -m "feat: silent mode toggle with DND-permission fallback"
 
 ## Task 16: WiFi / Bluetooth / Settings deep-link buttons
 
-**Note:** Android 10+ removed programmatic WiFi/Bluetooth toggle for non-system apps (`WifiManager.setWifiEnabled` is a no-op for third-party apps targeting API 29+). Peel routes the user to the system panels instead.
+**Note:** Android 10+ removed programmatic WiFi/Bluetooth toggle for non-system apps (`WifiManager.setWifiEnabled` is a no-op for third-party apps targeting API 29+). Minimal routes the user to the system panels instead.
 
 **Files:**
 - Modify: `app/src/main/res/layout/activity_control_center.xml`
 - Modify: `app/src/main/res/values/strings.xml`
-- Modify: `app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt`
+- Modify: `app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt`
 
 - [ ] **Step 1: Add three buttons**
 
@@ -1835,7 +1835,7 @@ Each button should open the corresponding system panel.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add app/src/main/kotlin/com/peel/launcher/ControlCenterActivity.kt \
+git add app/src/main/kotlin/com/minimal/launcher/ControlCenterActivity.kt \
         app/src/main/res/layout/activity_control_center.xml \
         app/src/main/res/values/strings.xml
 git commit -m "feat: WiFi/Bluetooth/Settings deep-links in Control Center"
@@ -1864,7 +1864,7 @@ Add it to ControlCenterActivity if missing.
 In `strings.xml`:
 
 ```xml
-<string name="app_name">Peel</string>
+<string name="app_name">Minimal</string>
 ```
 
 (Should already be set — verify.)
@@ -1901,7 +1901,7 @@ open -a "Android Studio" .
 ./gradlew connectedCheck  # Espresso tests on running emulator
 ```
 
-To set Peel as the default home on the emulator, install the app, press the home button, and choose "Always" when prompted.
+To set Minimal as the default home on the emulator, install the app, press the home button, and choose "Always" when prompted.
 ```
 
 - [ ] **Step 2: Run all tests one more time**
@@ -1927,7 +1927,7 @@ git push -u origin main
 - [ ] Every step that changes code includes the actual code (no "implement appropriately")
 - [ ] Method names match across tasks: `AppLauncher.launch`, `AppTile.defaultTiles`, `SwipeDownDetector.onTouch`
 - [ ] Resource IDs referenced match across XML and Kotlin: `R.id.tile_grid`, `R.id.tile_card`, `R.id.tile_icon`, `R.id.control_scrim`, `R.id.control_panel`, `R.id.brightness_seek`, `R.id.volume_seek`, `R.id.silent_toggle`, `R.id.wifi_btn`, `R.id.bluetooth_btn`, `R.id.settings_btn`
-- [ ] Color resources match: `tile_phone`, `tile_sms`, `tile_camera`, `tile_claude`, `peel_background`, `peel_surface`, `tile_icon`
+- [ ] Color resources match: `tile_phone`, `tile_sms`, `tile_camera`, `tile_claude`, `minimal_background`, `minimal_surface`, `tile_icon`
 - [ ] Each task ends in a commit
 - [ ] Tests precede implementation for the four logic-bearing units (AppTile, AppLauncher, AppTileAdapter, SwipeDownDetector)
 - [ ] No references to Phase 2/3 components (LED, SMS, Wispr) — those are explicitly out of scope

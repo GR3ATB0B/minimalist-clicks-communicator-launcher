@@ -27,7 +27,7 @@ Plus **Wispr Flow** as a background voice-input service, triggered by the Clicks
 
 ## Build
 
-Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/superpowers/plans/2026-05-04-peel-core-launcher.md)
+Phase 1 plan: [`docs/superpowers/plans/2026-05-04-minimal-core-launcher.md`](docs/superpowers/plans/2026-05-04-minimal-core-launcher.md)
 
 ### Requirements
 
@@ -51,13 +51,9 @@ Phase 1 plan: [`docs/superpowers/plans/2026-05-04-peel-core-launcher.md`](docs/s
 ./gradlew connectedCheck
 
 # Launch on the emulator and set as default home
-adb shell am start -n com.peel.launcher/.MainActivity
-adb shell cmd package set-home-activity com.peel.launcher/com.peel.launcher.MainActivity
+adb shell am start -n com.minimal.launcher/.MainActivity
+adb shell cmd package set-home-activity com.minimal.launcher/com.minimal.launcher.MainActivity
 ```
-
-## Background
-
-This started in May 2026 as the software side of a larger personal project about bounding phone reachability, which moved on to other hardware. The launcher was split out on its own so Clicks owners can find and use it. Internally the code still uses the working name "Peel" (package `com.peel.launcher`, app label, style names).
 
 ## License
 

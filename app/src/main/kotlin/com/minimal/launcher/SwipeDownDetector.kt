@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import android.view.MotionEvent
 import android.view.View

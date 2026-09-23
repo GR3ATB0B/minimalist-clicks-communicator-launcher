@@ -1,4 +1,4 @@
-# Peel Launcher — Phase 1.5 Visual Refinement Design
+# Minimal Launcher — Phase 1.5 Visual Refinement Design
 
 **Date:** 2026-05-04
 **Status:** Design approved, ready for implementation plan
@@ -6,7 +6,7 @@
 
 ## Goal
 
-Bring the visible surfaces of Peel Launcher to an Apple-grade aesthetic that matches the reference at whatthenash.com — minimalism with personality, generous whitespace, restrained color, intentional typography. The refined-flat foundation chosen here lives or dies on color sophistication and type quality, not on glass or shadow.
+Bring the visible surfaces of Minimal Launcher to an Apple-grade aesthetic that matches the reference at whatthenash.com — minimalism with personality, generous whitespace, restrained color, intentional typography. The refined-flat foundation chosen here lives or dies on color sophistication and type quality, not on glass or shadow.
 
 This spec covers two surfaces only:
 
@@ -16,7 +16,7 @@ This spec covers two surfaces only:
 Out of scope:
 
 - Lock-screen / ambient view. Android lock screen is system-controlled. A future ambient surface using the same type system is deferred to Phase 2.
-- Clicks Communicator–specific emulator dimensions. The current `Peel_Test_API35` AVD (Pixel 7 profile) is the implementation target. A separate AVD matching Clicks dimensions is a follow-up.
+- Clicks Communicator–specific emulator dimensions. The current `Minimal_Test_API35` AVD (Pixel 7 profile) is the implementation target. A separate AVD matching Clicks dimensions is a follow-up.
 - Phase 2 features: LED ring, SMS/call notifications, priority contacts, Wispr Flow, Clicks key mapping, content filtering.
 
 ## Foundation
@@ -27,19 +27,19 @@ Out of scope:
 
 | Token | Hex | Usage |
 |---|---|---|
-| `peel_background` | `#000000` | Home background, status bar fill |
-| `peel_panel` | `#0E0E0E` | Control Center surface |
-| `peel_chip` | `#1A1A1A` | Pill chip fill, slider track |
+| `minimal_background` | `#000000` | Home background, status bar fill |
+| `minimal_panel` | `#0E0E0E` | Control Center surface |
+| `minimal_chip` | `#1A1A1A` | Pill chip fill, slider track |
 | `tile_phone` | `#1F3D2B` | Phone tile (forest) — replaces `#00FF00` |
 | `tile_messages` | `#243349` | Messages tile (indigo navy) — replaces `#0000FF` |
 | `tile_camera` | `#2A2723` | Camera tile (warm graphite) — replaces `#808080` |
 | `tile_claude` | `#3D2418` | Claude tile (terracotta) — replaces `#FF6600` |
-| `peel_text_primary` | `#FFFFFF` | Headings, body, chip labels |
-| `peel_text_muted` | `#888888` | Section labels, secondary readouts |
-| `peel_text_faint` | `#444444` | Reserved for future low-emphasis chrome |
-| `peel_icon` | `#FFFFFF` | All tile glyphs and Control Center icons |
+| `minimal_text_primary` | `#FFFFFF` | Headings, body, chip labels |
+| `minimal_text_muted` | `#888888` | Section labels, secondary readouts |
+| `minimal_text_faint` | `#444444` | Reserved for future low-emphasis chrome |
+| `minimal_icon` | `#FFFFFF` | All tile glyphs and Control Center icons |
 
-`colors.xml` is rewritten in full. `themes.xml` keeps `Theme.Peel` parented to `Theme.Material3.DayNight.NoActionBar` but updates `windowBackground` to `peel_background` and removes any unused legacy color references.
+`colors.xml` is rewritten in full. `themes.xml` keeps `Theme.Minimal` parented to `Theme.Material3.DayNight.NoActionBar` but updates `windowBackground` to `minimal_background` and removes any unused legacy color references.
 
 ## 2. Tile component
 
@@ -156,7 +156,7 @@ Implemented via three drawables: `slider_track.xml` (layer-list with track + sca
 | Pressed scale | `0.96` |
 | Pressed opacity | `0.85` |
 
-`Widget.Material3.Button.OutlinedButton` is removed. New `chip_pill.xml` shape drawable + a `Widget.Peel.Chip` style applied to plain `TextView`s with `OnClickListener`s.
+`Widget.Material3.Button.OutlinedButton` is removed. New `chip_pill.xml` shape drawable + a `Widget.Minimal.Chip` style applied to plain `TextView`s with `OnClickListener`s.
 
 ### Silent toggle row
 
@@ -176,14 +176,14 @@ Implemented via three drawables: `slider_track.xml` (layer-list with track + sca
 | Exit | translate Y `0` → `-panelHeight`, `180ms`, `AccelerateInterpolator` (ease-in) |
 | Exit (scrim) | alpha `1` → `0`, `180ms`, parallel |
 
-The existing `Animation.Translucent` window animation in `Theme.Peel.ControlCenter` is replaced by these explicit `ViewPropertyAnimator` calls in `ControlCenterActivity.onCreate` / `onBackPressedDispatcher`, so the panel and scrim animate independently.
+The existing `Animation.Translucent` window animation in `Theme.Minimal.ControlCenter` is replaced by these explicit `ViewPropertyAnimator` calls in `ControlCenterActivity.onCreate` / `onBackPressedDispatcher`, so the panel and scrim animate independently.
 
 ## File-level change summary
 
 | File | Change |
 |---|---|
 | `app/src/main/res/values/colors.xml` | Rewrite to the palette above |
-| `app/src/main/res/values/themes.xml` | Keep `Theme.Peel` parent; update window background reference; add `Widget.Peel.Chip` and slider style |
+| `app/src/main/res/values/themes.xml` | Keep `Theme.Minimal` parent; update window background reference; add `Widget.Minimal.Chip` and slider style |
 | `app/src/main/res/values/dimens.xml` | New file — declare all `text_*` tokens, all radii, paddings used in this spec |
 | `app/src/main/res/drawable/tile_phone_bg.xml` | New — rounded-rect shape, `tile_phone` |
 | `app/src/main/res/drawable/tile_messages_bg.xml` | New — `tile_messages` |
@@ -193,22 +193,22 @@ The existing `Animation.Translucent` window animation in `Theme.Peel.ControlCent
 | `app/src/main/res/drawable/ic_messages.xml` | Replace with stroke vector |
 | `app/src/main/res/drawable/ic_camera.xml` | Replace with stroke vector |
 | `app/src/main/res/drawable/ic_claude.xml` | Replace with the Wikimedia Commons Claude AI symbol path |
-| `app/src/main/res/drawable/chip_pill.xml` | New — pill shape, `peel_chip` |
+| `app/src/main/res/drawable/chip_pill.xml` | New — pill shape, `minimal_chip` |
 | `app/src/main/res/drawable/slider_track.xml` | New — layer-list track + progress |
 | `app/src/main/res/drawable/slider_thumb.xml` | New — oval thumb with shadow |
-| `app/src/main/res/drawable/cc_panel_bg.xml` | New — bottom-rounded rect, `peel_panel` |
+| `app/src/main/res/drawable/cc_panel_bg.xml` | New — bottom-rounded rect, `minimal_panel` |
 | `app/src/main/res/drawable/cc_drag_handle.xml` | New — small pill |
 | `app/src/main/res/layout/item_app_tile.xml` | Replace `MaterialCardView` with `FrameLayout` + per-tile background drawable |
 | `app/src/main/res/layout/activity_main.xml` | Add `app:layout_constraintWidth_max` and vertical bias to grid container |
 | `app/src/main/res/layout/activity_control_center.xml` | Restructure for new chip/slider/silent-row markup, drag handle, panel background drawable |
-| `app/src/main/java/com/peel/launcher/MainActivity.kt` | Wire spring press-animation on tile click |
-| `app/src/main/java/com/peel/launcher/ControlCenterActivity.kt` | Replace stock window animation with explicit panel + scrim `ViewPropertyAnimator`; same press feedback on chips |
+| `app/src/main/java/com/minimal/launcher/MainActivity.kt` | Wire spring press-animation on tile click |
+| `app/src/main/java/com/minimal/launcher/ControlCenterActivity.kt` | Replace stock window animation with explicit panel + scrim `ViewPropertyAnimator`; same press feedback on chips |
 
 ## Verification (post-implementation)
 
-- Visual: install on `Peel_Test_API35`, capture screenshot of home grid and Control Center, compare against the locked mockups.
+- Visual: install on `Minimal_Test_API35`, capture screenshot of home grid and Control Center, compare against the locked mockups.
 - Existing test suites stay green: 8 Robolectric/JUnit unit tests, 2 Espresso instrumented tests (`gridShowsFourTiles`, `gridIsVisible`).
-- New: an Espresso assertion that the Control Center panel `View` has `peel_panel` background and the brightness slider's progress drawable resolves to `slider_track`. (Concrete test names handed off to the writing-plans pass.)
+- New: an Espresso assertion that the Control Center panel `View` has `minimal_panel` background and the brightness slider's progress drawable resolves to `slider_track`. (Concrete test names handed off to the writing-plans pass.)
 
 ## Sources
 

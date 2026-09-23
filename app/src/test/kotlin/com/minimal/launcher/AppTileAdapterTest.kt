@@ -1,4 +1,4 @@
-package com.peel.launcher
+package com.minimal.launcher
 
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
@@ -25,7 +25,7 @@ class AppTileAdapterTest {
 
         // Bind position 2 (Camera)
         val app: android.app.Application = ApplicationProvider.getApplicationContext()
-        app.setTheme(R.style.Theme_Peel)
+        app.setTheme(R.style.Theme_Minimal)
         val holder = adapter.onCreateViewHolder(
             android.widget.FrameLayout(app),
             0,
